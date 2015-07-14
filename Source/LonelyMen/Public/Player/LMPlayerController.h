@@ -12,8 +12,16 @@ UCLASS()
 class LONELYMEN_API ALMPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
-	
-	
+public:
+	ALMPlayerController();
+private:
+	///////////////////////////调整角色面向
+	bool bIsRotationChange;
+	void RotationChange();
+	void StopRotationChange();
+	///////////////////////////////////////
+protected:
+	virtual void SetupInputComponent() override;
+	virtual void Tick(float DeltaSeconds);
 	
 };

@@ -22,13 +22,38 @@ void ALMPlayerController::StopRotationChange()
 void ALMPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	InputComponent->BindAction("ChangeRotation", IE_Pressed, this, &ALMPlayerController::RotationChange);
-	InputComponent->BindAction("StopChangeRotation", IE_Released, this, &ALMPlayerController::StopRotationChange);
+	InputComponent->BindAction("ChangePlayerRotation",EInputEvent::IE_Pressed, this, &ALMPlayerController::RotationChange);
+	InputComponent->BindAction("ChangePlayerRotation", EInputEvent::IE_Released, this, &ALMPlayerController::StopRotationChange);
+
+	//InputComponent->BindAction("SelectMouseDownTargetObject", EInputEvent::IE_Pressed, this, &ALMPlayerController::RMouseDownSelectTarget);
 }
 
 void ALMPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	
+	PawnRotationToTarget();
 
+}
+
+void ALMPlayerController::PawnRotationToTarget()
+{
+	if (this->bIsRotationChange)
+	{
+		FHitResult CursorHitRes = FHitResult();
+		if (GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHitRes))
+		{
+			FVector FaceDir = CursorHitRes.Location - GetPawn()->GetActorLocation();
+			FRotator FaceRotator = FaceDir.Rotation();
+			FaceRotator.Pitch = 0;
+			FaceRotator.Roll = 0;
+			GetPawn()->SetActorRotation(FaceRotator);
+		}
+	}
+
+}
+
+void ALMPlayerController::RMouseDownSelectTarget()
+{
 
 }

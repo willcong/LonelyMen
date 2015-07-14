@@ -19,7 +19,11 @@ private:
 	bool bIsRotationChange;
 	void RotationChange();
 	void StopRotationChange();
-	///////////////////////////////////////
+	void PawnRotationToTarget();
+	///////////////////////////////////////选择目标对象
+public:
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void RMouseDownSelectTarget();
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void Tick(float DeltaSeconds);

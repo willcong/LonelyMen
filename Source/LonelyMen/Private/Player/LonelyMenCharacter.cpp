@@ -40,6 +40,10 @@ ALonelyMenCharacter::ALonelyMenCharacter()
 	FollowCamera->AttachTo(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	this->CameraZoomMin = 400;
+	this->CameraZoomMax = 1200;
+	this->CameraZoomRate = 50;
+	this->GoalArmLength = CameraBoom->TargetArmLength;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -60,14 +64,18 @@ void ALonelyMenCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	InputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	InputComponent->BindAxis("TurnRate", this, &ALonelyMenCharacter::TurnAtRate);
-	InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	InputComponent->BindAxis("LookUpRate", this, &ALonelyMenCharacter::LookUpAtRate);
+	//InputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	//InputComponent->BindAxis("TurnRate", this, &ALonelyMenCharacter::TurnAtRate);
+	//InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	//InputComponent->BindAxis("LookUpRate", this, &ALonelyMenCharacter::LookUpAtRate);
 
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &ALonelyMenCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ALonelyMenCharacter::TouchStopped);
+
+	//°ó¶¨Ïà»ú¹öÂÖ
+	InputComponent->BindAction("CameraZoomIn", IE_Pressed, this, &ALonelyMenCharacter::CameraZoomIn);
+	InputComponent->BindAction("CameraZoomOut", IE_Pressed, this, &ALonelyMenCharacter::CameraZoomOut);
 }
 
 
@@ -127,4 +135,32 @@ void ALonelyMenCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void ALonelyMenCharacter::CameraZoomIn()
+{
+	this->GoalArmLength -= this->CameraZoomRate;
+}
+
+void ALonelyMenCharacter :: CameraZoomOut()
+{
+	this->GoalArmLength += this->CameraZoomRate;
+}
+
+void ALonelyMenCharacter::AdjuestCameraArmLength(float DeltaTime)
+{
+	if (this->GoalArmLength != CameraBoom->TargetArmLength)
+	{
+		
+		float tmpLength = FMath::FInterpTo(CameraBoom->TargetArmLength, this->GoalArmLength, DeltaTime, this->CameraZoomRate/10);
+		CameraBoom->TargetArmLength = FMath::Clamp<float>(tmpLength, this->CameraZoomMin, this->CameraZoomMax);
+	}
+}
+
+void ALonelyMenCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	this->AdjuestCameraArmLength(DeltaSeconds);
+
 }

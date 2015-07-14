@@ -25,8 +25,29 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+	/** 相机最小拉近距离 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+		float CameraZoomMin;
+
+	/** 相机最大拉远距离 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+		float CameraZoomMax;
+
+	/** 相机缩放系数 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+		float CameraZoomRate;
+	/** 相机与角色新距离 */
+	float GoalArmLength;
 
 protected:
+	/**相机拉近*/
+	//UFUNCTION(BlueprintCallable,Category="Camera")
+	void CameraZoomIn();
+	/**相机拉远*/
+	//UFUNCTION(BlueprintCallable, Category = "Camera")
+	void CameraZoomOut();
+
+	void AdjuestCameraArmLength(float DeltaTime);
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -55,8 +76,9 @@ protected:
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void Tick(float DeltaSeconds) override;
 	// End of APawn interface
-
+	
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

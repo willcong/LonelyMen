@@ -25,7 +25,7 @@ void ALMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("ChangePlayerRotation",EInputEvent::IE_Pressed, this, &ALMPlayerController::RotationChange);
 	InputComponent->BindAction("ChangePlayerRotation", EInputEvent::IE_Released, this, &ALMPlayerController::StopRotationChange);
 
-	//InputComponent->BindAction("SelectMouseDownTargetObject", EInputEvent::IE_Pressed, this, &ALMPlayerController::RMouseDownSelectTarget);
+	InputComponent->BindAction("SelectMouseDownTargetObject", EInputEvent::IE_Pressed, this, &ALMPlayerController::RMouseDownSelectTarget);
 }
 
 void ALMPlayerController::Tick(float DeltaSeconds)
@@ -55,5 +55,27 @@ void ALMPlayerController::PawnRotationToTarget()
 
 void ALMPlayerController::RMouseDownSelectTarget()
 {
+	FHitResult HitRes = FHitResult();
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectType;
+	//只检测一下对象
+	ObjectType.Add(EOBJECTTYPEQUERY_SELECTACTOR);
 
+	if (GetHitResultUnderCursorForObjects(ObjectType,false,HitRes))
+	{
+		if (HitRes.GetComponent() == pCurSelectedComponent)
+		{
+			return;
+		}
+		else
+		{
+			if (pCurSelectedComponent != nullptr)
+				pCurSelectedComponent->SetRenderCustomDepth(false);
+
+			pCurSelectedComponent = HitRes.GetComponent();
+
+			pCurSelectedComponent->SetRenderCustomDepth(true);
+
+		}
+
+	}
 }

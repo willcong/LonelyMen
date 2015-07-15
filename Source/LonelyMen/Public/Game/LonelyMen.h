@@ -4,5 +4,6 @@
 #define __LONELYMEN_H__
 
 #include "EngineMinimal.h"
-
+//重命名 EObjectTypeQuery内的类型,与编辑器里ObjectChannel 对应
+#define EOBJECTTYPEQUERY_SELECTACTOR		ObjectTypeQuery7
 #endif

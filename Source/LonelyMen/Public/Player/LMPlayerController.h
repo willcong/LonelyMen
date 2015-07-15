@@ -21,6 +21,7 @@ private:
 	void StopRotationChange();
 	void PawnRotationToTarget();
 	///////////////////////////////////////选择目标对象
+	UPrimitiveComponent *pCurSelectedComponent = nullptr;
 public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void RMouseDownSelectTarget();

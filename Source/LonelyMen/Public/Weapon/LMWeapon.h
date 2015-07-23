@@ -16,7 +16,7 @@ namespace EWeaponState
 	};
 }
 
-UCLASS(Abstract)
+UCLASS(Abstract, Blueprintable)
 class LONELYMEN_API ALMWeapon : public AActor
 {
 	GENERATED_BODY()
@@ -25,7 +25,6 @@ public:
 	// Sets default values for this actor's properties
 	ALMWeapon();
 
-protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	// weapon usage

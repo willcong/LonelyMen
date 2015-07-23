@@ -3,7 +3,7 @@
 #include "GameFramework/Character.h"
 #include "LonelyMenCharacter.generated.h"
 
-UCLASS(config=Game)
+UCLASS(Abstract,config = Game)
 class ALonelyMenCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -18,6 +18,8 @@ class ALonelyMenCharacter : public ACharacter
 public:
 	ALonelyMenCharacter();
 
+	//////////////////////////////////////////////////////////////////////////
+	// 摄像机相关
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -48,31 +50,48 @@ protected:
 	void CameraZoomOut();
 
 	void AdjuestCameraArmLength(float DeltaTime);
+	//////////////////////////////////////////////////////////////////////////
+	// 武器相关
+protected:
+	/** currenly equipped weapon */
+	UPROPERTY(Transient)
+	class ALMWeapon* CurrentWeapon;
+	
+	/** socket or bone name for attaching weapon mesh */
+	UPROPERTY(EditDefaultsOnly ,Category=Inventory)
+	FName WeaponAttachPoint;
 
+	/** current firing state */
+	uint8 bWantsToFire : 1;
+
+	/** get firing state */
+	UFUNCTION(BlueprintCallable,Category="Game|Weapon")
+	bool IsFiring() const;
+	//////////////////////////////////////////////////////////////////////////
+	// 输入
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
-	/** 
-	 * Called via input to turn at a given rate. 
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
+	/**
+	* Called via input to turn at a given rate.
+	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	*/
 	void TurnAtRate(float Rate);
 
 	/**
-	 * Called via input to turn look up/down at a given rate. 
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
+	* Called via input to turn look up/down at a given rate.
+	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	*/
 	void LookUpAtRate(float Rate);
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
+	/** player pressed start fire action */
+	void OnStartFire();
 
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-
+	/** player released start fire action */
+	void OnStopFire();
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;

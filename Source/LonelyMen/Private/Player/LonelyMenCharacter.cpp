@@ -2,6 +2,7 @@
 
 #include "LonelyMen.h"
 #include "LonelyMenCharacter.h"
+#include "Weapon/LMWeapon.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ALonelyMenCharacter
@@ -46,6 +47,8 @@ ALonelyMenCharacter::ALonelyMenCharacter()
 	this->GoalArmLength = CameraBoom->TargetArmLength;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	bWantsToFire = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,31 +72,13 @@ void ALonelyMenCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	//InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	//InputComponent->BindAxis("LookUpRate", this, &ALonelyMenCharacter::LookUpAtRate);
 
-	// handle touch devices
-	InputComponent->BindTouch(IE_Pressed, this, &ALonelyMenCharacter::TouchStarted);
-	InputComponent->BindTouch(IE_Released, this, &ALonelyMenCharacter::TouchStopped);
-
 	//绑定相机滚轮
 	InputComponent->BindAction("CameraZoomIn", IE_Pressed, this, &ALonelyMenCharacter::CameraZoomIn);
 	InputComponent->BindAction("CameraZoomOut", IE_Pressed, this, &ALonelyMenCharacter::CameraZoomOut);
-}
 
-
-void ALonelyMenCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-	// jump, but only on the first touch
-	if (FingerIndex == ETouchIndex::Touch1)
-	{
-		Jump();
-	}
-}
-
-void ALonelyMenCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-	if (FingerIndex == ETouchIndex::Touch1)
-	{
-		StopJumping();
-	}
+	//绑定攻击
+	InputComponent->BindAction("Fire", IE_Pressed, this, &ALonelyMenCharacter::OnStartFire);
+	InputComponent->BindAction("Fire", IE_Released, this, &ALonelyMenCharacter::OnStopFire);
 }
 
 void ALonelyMenCharacter::TurnAtRate(float Rate)
@@ -163,4 +148,33 @@ void ALonelyMenCharacter::Tick(float DeltaSeconds)
 
 	this->AdjuestCameraArmLength(DeltaSeconds);
 
+}
+
+void ALonelyMenCharacter::OnStartFire()
+{
+	if (!bWantsToFire)
+	{
+		bWantsToFire = true;
+		if (CurrentWeapon != nullptr)
+		{
+			CurrentWeapon->StartFire();
+		}
+	}
+}
+
+void ALonelyMenCharacter::OnStopFire()
+{
+	if (bWantsToFire)
+	{
+		bWantsToFire = false;
+		if (CurrentWeapon != nullptr)
+		{
+			CurrentWeapon->StopFire();
+		}
+	}
+}
+
+bool ALonelyMenCharacter::IsFiring() const
+{
+	return bWantsToFire;
 }

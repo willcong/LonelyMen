@@ -64,11 +64,38 @@ protected:
 	/** current firing state */
 	uint8 bWantsToFire : 1;
 
+	/** which sub class of ALMWeapon can use 筛选出ALMWeapon的子类 */
+	UPROPERTY(EditDefaultsOnly, Category = Inventory)
+	TArray<TSubclassOf<class ALMWeapon>> DefaultInventoryClasses;
+
+	UPROPERTY(Transient)
+	TArray<class ALMWeapon*> Inventory;
+
 	/** get firing state */
 	UFUNCTION(BlueprintCallable,Category="Game|Weapon")
 	bool IsFiring() const;
+
+	/** 创建默认的武器 */
+	void SpawnDefaultInventory();
+
+	/** 将武器初始化并加入武器库列表 */
+	void AddWeapon(class ALMWeapon* weapon);
+
+	/** 将武器从武器库列表内移除 */
+	void RemoveWeapon(class ALMWeapon* weapon);
+
+	/** 装备武器到角色身上 */
+	void EquipWeapon(class ALMWeapon* weapon);
+
+	/**  设置新武器为当前武器 */
+	void SetCurrentWeapon(class ALMWeapon* NewWeapon, class ALMWeapon* LastWeapon = NULL);
+public:
+	/** get weapon attach point */
+	FName GetWeaponAttachPoint() const;
+protected:
 	//////////////////////////////////////////////////////////////////////////
 	// 输入
+
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -96,6 +123,8 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	virtual void Tick(float DeltaSeconds) override;
+	/** spawn inventory, setup initial variables */
+	virtual void PostInitializeComponents() override;
 	// End of APawn interface
 	
 public:

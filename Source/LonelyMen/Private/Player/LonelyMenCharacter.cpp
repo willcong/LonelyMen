@@ -178,3 +178,88 @@ bool ALonelyMenCharacter::IsFiring() const
 {
 	return bWantsToFire;
 }
+
+void ALonelyMenCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	SpawnDefaultInventory();
+}
+
+void ALonelyMenCharacter::SpawnDefaultInventory()
+{
+	int32 InventoryCount = this->DefaultInventoryClasses.Num();
+	for (int32 i = 0; i < InventoryCount;i++)
+	{
+		if (DefaultInventoryClasses[i])
+		{
+			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.bNoCollisionFail = true;
+			ALMWeapon* NewWeapon = GetWorld()->SpawnActor<ALMWeapon>(DefaultInventoryClasses[i], SpawnInfo);
+			AddWeapon(NewWeapon);
+		}
+	}
+
+	if (Inventory.Num()>0)
+	{
+		EquipWeapon(Inventory[0]);
+	}
+}
+
+void ALonelyMenCharacter::AddWeapon(ALMWeapon* weapon)
+{
+	if (weapon)
+	{
+		weapon->OnEnterInventory(this);
+		Inventory.Add(weapon);
+	}
+}
+
+void ALonelyMenCharacter::RemoveWeapon(ALMWeapon* weapon)
+{
+	if (weapon)
+	{
+		weapon->OnLeaveInventory();
+		Inventory.RemoveSingle(weapon);
+	}
+}
+
+void ALonelyMenCharacter::EquipWeapon(class ALMWeapon* weapon)
+{
+	if (weapon)
+	{
+		SetCurrentWeapon(weapon);
+	}
+}
+
+void ALonelyMenCharacter::SetCurrentWeapon(class ALMWeapon* NewWeapon, class ALMWeapon* LastWeapon /* = NULL */)
+{
+	ALMWeapon* LocalLastWeapon = NULL;
+
+	if (LastWeapon!= NULL)
+	{
+		LocalLastWeapon = LastWeapon;
+	}
+	else if (NewWeapon != CurrentWeapon)
+	{
+		LocalLastWeapon = CurrentWeapon;
+	}
+
+	if (LocalLastWeapon != NULL)
+	{
+		LocalLastWeapon->OnUnEquip();
+	}
+
+	CurrentWeapon = NewWeapon;
+
+	if (CurrentWeapon != NULL)
+	{
+		CurrentWeapon->SetOwningPawn(this);
+		CurrentWeapon->OnEquip();
+	}
+}
+
+FName ALonelyMenCharacter::GetWeaponAttachPoint() const
+{
+	return WeaponAttachPoint;
+}

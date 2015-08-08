@@ -22,11 +22,16 @@ private:
 	void PawnRotationToTarget();
 	///////////////////////////////////////选择目标对象
 	UPrimitiveComponent *pCurSelectedComponent = nullptr;
+	ALonelyMenCharacter *pMyCharacter = nullptr;//当前控制的Character
+	//////////////////////////////////////////////////////////////////////////Character开火攻击
+	void OnStartFire();
+	void OnStopFire();
 public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void RMouseDownSelectTarget();
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void Tick(float DeltaSeconds);
-	
+	virtual void Possess(APawn* aPawn) override;
+
 };

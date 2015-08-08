@@ -138,8 +138,15 @@ public:
 	// weapon usage helpers
 	/** find hit */
 	FHitResult WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const;
-
 	virtual void FireWeapon() PURE_VIRTUAL(AShooterWeapon::FireWeapon, );
+
+	//////////////////////////////////////////////////////////////////////////
+	// weapon animation
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+		UAnimationAsset* FireAnim;
+
+public:
+	void PlayWeaponAnimation(class UAnimationAsset* newAnim);
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 

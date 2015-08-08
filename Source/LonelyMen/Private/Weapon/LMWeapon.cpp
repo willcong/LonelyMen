@@ -19,7 +19,7 @@ ALMWeapon::ALMWeapon(const FObjectInitializer& ObjectInitializer) : Super(Object
 	Mesh->SetCollisionObjectType(ECC_WorldDynamic);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-
+	Mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 	RootComponent = Mesh;
 
 	FireBurstsRate = 0.1f;
@@ -53,7 +53,7 @@ void ALMWeapon::StartFire()
 {
 	IsTriggerBursts = true;
 	FireWeapon();
-
+	PlayWeaponAnimation(FireAnim);
 	UseAmmo();
 }
 
@@ -199,5 +199,13 @@ void ALMWeapon::Tick(float DeltaSeconds)
 			LastFireBurstsTime = 0;
 			StartFire();
 		}
+	}
+}
+
+void ALMWeapon::PlayWeaponAnimation(class UAnimationAsset* newAnim)
+{
+	if (newAnim)
+	{
+		Mesh->PlayAnimation(newAnim,false);
 	}
 }

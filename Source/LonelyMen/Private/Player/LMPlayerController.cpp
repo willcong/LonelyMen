@@ -26,6 +26,10 @@ void ALMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("ChangePlayerRotation", EInputEvent::IE_Released, this, &ALMPlayerController::StopRotationChange);
 
 	InputComponent->BindAction("SelectMouseDownTargetObject", EInputEvent::IE_Pressed, this, &ALMPlayerController::RMouseDownSelectTarget);
+
+	//°ó¶¨¹¥»÷
+	InputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ALMPlayerController::OnStartFire);
+	InputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ALMPlayerController::OnStopFire);
 }
 
 void ALMPlayerController::Tick(float DeltaSeconds)
@@ -77,5 +81,34 @@ void ALMPlayerController::RMouseDownSelectTarget()
 
 		}
 
+	}
+}
+
+void ALMPlayerController::OnStartFire()
+{
+	RotationChange();
+	if (pMyCharacter)
+	{
+		pMyCharacter->OnStartFire();
+	}
+}
+
+void ALMPlayerController::OnStopFire()
+{
+	StopRotationChange();
+	if (pMyCharacter)
+	{
+		pMyCharacter->OnStopFire();
+	}
+}
+
+void ALMPlayerController::Possess(APawn* aPawn)
+{
+	Super::Possess(aPawn);
+
+	ALonelyMenCharacter *tmpCharacter = Cast<ALonelyMenCharacter>(aPawn);
+	if (tmpCharacter != NULL)
+	{
+		this->pMyCharacter = tmpCharacter;
 	}
 }

@@ -75,7 +75,7 @@ protected:
 	UFUNCTION(BlueprintCallable,Category="Game|Weapon")
 	bool IsFiring() const;
 
-	/** 创建默认的武器 */
+	/** 创建默认的武器 */ 
 	void SpawnDefaultInventory();
 
 	/** 将武器初始化并加入武器库列表 */
@@ -113,7 +113,7 @@ protected:
 	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	*/
 	void LookUpAtRate(float Rate);
-
+public:
 	/** player pressed start fire action */
 	void OnStartFire();
 

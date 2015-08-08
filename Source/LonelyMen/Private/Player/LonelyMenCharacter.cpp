@@ -77,8 +77,8 @@ void ALonelyMenCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	InputComponent->BindAction("CameraZoomOut", IE_Pressed, this, &ALonelyMenCharacter::CameraZoomOut);
 
 	//°ó¶¨¹¥»÷
-	InputComponent->BindAction("Fire", IE_Pressed, this, &ALonelyMenCharacter::OnStartFire);
-	InputComponent->BindAction("Fire", IE_Released, this, &ALonelyMenCharacter::OnStopFire);
+	//InputComponent->BindAction("Fire", IE_Pressed, this, &ALonelyMenCharacter::OnStartFire);
+	//InputComponent->BindAction("Fire", IE_Released, this, &ALonelyMenCharacter::OnStopFire);
 }
 
 void ALonelyMenCharacter::TurnAtRate(float Rate)

@@ -30,6 +30,8 @@ void ALMPlayerController::SetupInputComponent()
 	//°ó¶¨¹¥»÷
 	InputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ALMPlayerController::OnStartFire);
 	InputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ALMPlayerController::OnStopFire);
+	InputComponent->BindAction("ParticularFire", EInputEvent::IE_Pressed, this, &ALMPlayerController::OnStartParticularFire);
+	InputComponent->BindAction("ParticularFire", EInputEvent::IE_Released, this, &ALMPlayerController::OnStopParticularFire);
 }
 
 void ALMPlayerController::Tick(float DeltaSeconds)
@@ -110,5 +112,21 @@ void ALMPlayerController::Possess(APawn* aPawn)
 	if (tmpCharacter != NULL)
 	{
 		this->pMyCharacter = tmpCharacter;
+	}
+}
+
+void ALMPlayerController::OnStartParticularFire()
+{
+	if (pMyCharacter)
+	{
+		pMyCharacter->OnStartParticularFire();
+	}
+}
+
+void ALMPlayerController::OnStopParticularFire()
+{
+	if (pMyCharacter)
+	{
+		pMyCharacter->OnStopParticularFire();
 	}
 }

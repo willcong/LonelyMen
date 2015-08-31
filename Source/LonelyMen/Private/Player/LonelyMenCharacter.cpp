@@ -3,6 +3,7 @@
 #include "LonelyMen.h"
 #include "LonelyMenCharacter.h"
 #include "Weapon/LMWeapon.h"
+#include "Weapon/LMParticularWeapon.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ALonelyMenCharacter
@@ -49,6 +50,7 @@ ALonelyMenCharacter::ALonelyMenCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	bWantsToFire = false;
+	bEquipParticularWeapon = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -174,6 +176,32 @@ void ALonelyMenCharacter::OnStopFire()
 	}
 }
 
+void ALonelyMenCharacter::OnStartParticularFire()
+{
+	if (!bEquipParticularWeapon)
+	{
+		ParticularWeapon->OnEquip();
+		bEquipParticularWeapon = true;
+	}
+	if (ParticularWeapon != nullptr)
+	{
+		ParticularWeapon->StartFire();
+	}
+}
+
+void ALonelyMenCharacter::OnStopParticularFire()
+{
+	if (bEquipParticularWeapon)
+	{
+		ParticularWeapon->OnUnEquip();
+		bEquipParticularWeapon = false;
+	}
+	if (ParticularWeapon != nullptr)
+	{
+		ParticularWeapon->StopFire();
+	}
+}
+
 bool ALonelyMenCharacter::IsFiring() const
 {
 	return bWantsToFire;
@@ -211,7 +239,10 @@ void ALonelyMenCharacter::AddWeapon(ALMWeapon* weapon)
 	if (weapon)
 	{
 		weapon->OnEnterInventory(this);
-		Inventory.Add(weapon);
+		if (Cast<ALMParticularWeapon>(weapon) != NULL)
+			this->ParticularWeapon = Cast<ALMParticularWeapon>(weapon);
+		else
+			Inventory.Add(weapon);
 	}
 }
 
@@ -262,4 +293,9 @@ void ALonelyMenCharacter::SetCurrentWeapon(class ALMWeapon* NewWeapon, class ALM
 FName ALonelyMenCharacter::GetWeaponAttachPoint() const
 {
 	return WeaponAttachPoint;
+}
+
+FName ALonelyMenCharacter::GetParticularWeaponAttachPoint() const
+{
+	return ParticularAttachPoint;
 }

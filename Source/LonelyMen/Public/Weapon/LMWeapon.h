@@ -100,10 +100,10 @@ public:
 	FVector GetMuzzleDirection() const;
 
 	/** attach weapon mesh to owner pawn */
-	void AttachMeshToPawn();
+	virtual void AttachMeshToPawn();
 
 	/** detach weapon mesh from owner pawn */
-	void DetachMeshFromPawn();
+	virtual void DetachMeshFromPawn();
 
 	/**  «∑Ò¡¨∑¢ */
 	bool IsTriggerBursts;
@@ -121,6 +121,12 @@ public:
 
 	/** stop weapon fire */
 	virtual void StopFire();
+
+	/**  start particular weapon fire*/
+	virtual void StartParticularFire(){}
+
+	/** stop weapon fire */
+	virtual void StopParticularFire(){}
 
 	/** start weapon reload */
 	virtual void StartReload();

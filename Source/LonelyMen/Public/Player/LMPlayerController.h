@@ -26,6 +26,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////Character¿ª»ð¹¥»÷
 	void OnStartFire();
 	void OnStopFire();
+	void OnStartParticularFire();
+	void OnStopParticularFire();
 public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void RMouseDownSelectTarget();

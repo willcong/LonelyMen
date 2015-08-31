@@ -61,8 +61,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly ,Category=Inventory)
 	FName WeaponAttachPoint;
 
+	/** current equipped particular weapon */
+	UPROPERTY()
+	class ALMParticularWeapon* ParticularWeapon;
+
+	/** socket or bone name for attaching particular weapon mesh */
+	UPROPERTY(EditDefaultsOnly, Category = Inventory)
+	FName ParticularAttachPoint;
+
 	/** current firing state */
 	uint8 bWantsToFire : 1;
+
+	/** Particular Weapon is equip */
+	uint8 bEquipParticularWeapon : 1;
 
 	/** which sub class of ALMWeapon can use 筛选出ALMWeapon的子类 */
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
@@ -92,6 +103,9 @@ protected:
 public:
 	/** get weapon attach point */
 	FName GetWeaponAttachPoint() const;
+
+	/** get particular weapon attach point */
+	FName GetParticularWeaponAttachPoint() const;
 protected:
 	//////////////////////////////////////////////////////////////////////////
 	// 输入
@@ -119,6 +133,12 @@ public:
 
 	/** player released start fire action */
 	void OnStopFire();
+
+	/** player pressed start Particular fire action */
+	void OnStartParticularFire();
+
+	/** player pressed start particular fire action */
+	void OnStopParticularFire();
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;

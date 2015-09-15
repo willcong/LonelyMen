@@ -90,7 +90,7 @@ FHitResult ALMWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& Trace
 	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
 
 	{
-		DrawDebugLine(GetWorld(), TraceFrom, TraceTo, FLinearColor::Red,true,10.0f);
+		DrawDebugLine(GetWorld(), TraceFrom, TraceTo, FColor::Red,true,10.0f);
 	}
 
 	return Hit;

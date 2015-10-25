@@ -3,8 +3,9 @@
 #ifndef __LONELYMEN_H__
 #define __LONELYMEN_H__
 
-#include "EngineMinimal.h"
+#include "Engine.h"
 #include "LonelyMenCharacter.h"
+#include "NonPlayerCharacter.h"
 //重命名 EObjectTypeQuery内的类型,与编辑器里ObjectChannel 对应
 #define EOBJECTTYPEQUERY_SELECTACTOR		ObjectTypeQuery7
 

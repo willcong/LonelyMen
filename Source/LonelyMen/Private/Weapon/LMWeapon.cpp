@@ -88,9 +88,9 @@ FHitResult ALMWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& Trace
 
 	FHitResult Hit(ForceInit);
 	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
-
+	if (bHit)
 	{
-		DrawDebugLine(GetWorld(), TraceFrom, TraceTo, FColor::Red,true,10.0f);
+		DrawDebugLine(GetWorld(), TraceFrom, TraceTo, FColor::Red, true, 10.0f);
 	}
 
 	return Hit;

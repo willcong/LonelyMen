@@ -8,58 +8,19 @@ class ALonelyMenCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
 public:
 	ALonelyMenCharacter();
 
-	//////////////////////////////////////////////////////////////////////////
-	// 摄像机相关
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseTurnRate;
-
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseLookUpRate;
-	/** 相机最小拉近距离 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-		float CameraZoomMin;
-
-	/** 相机最大拉远距离 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-		float CameraZoomMax;
-
-	/** 相机缩放系数 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-		float CameraZoomRate;
-	/** 相机与角色新距离 */
-	float GoalArmLength;
-
-protected:
-	/**相机拉近*/
-	//UFUNCTION(BlueprintCallable,Category="Camera")
-	void CameraZoomIn();
-	/**相机拉远*/
-	//UFUNCTION(BlueprintCallable, Category = "Camera")
-	void CameraZoomOut();
-
-	void AdjuestCameraArmLength(float DeltaTime);
-	//////////////////////////////////////////////////////////////////////////
-	// 武器相关
+#pragma region 武器相关
 protected:
 	/** currenly equipped weapon */
 	UPROPERTY(Transient)
 	class ALMWeapon* CurrentWeapon;
-	
+
 	/** socket or bone name for attaching weapon mesh */
-	UPROPERTY(EditDefaultsOnly ,Category=Inventory)
-	FName WeaponAttachPoint;
+	UPROPERTY(EditDefaultsOnly, Category = Inventory)
+		FName WeaponAttachPoint;
 
 	/** current equipped particular weapon */
 	UPROPERTY()
@@ -67,7 +28,7 @@ protected:
 
 	/** socket or bone name for attaching particular weapon mesh */
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
-	FName ParticularAttachPoint;
+		FName ParticularAttachPoint;
 
 	/** current firing state */
 	uint8 bWantsToFire : 1;
@@ -77,16 +38,16 @@ protected:
 
 	/** which sub class of ALMWeapon can use 筛选出ALMWeapon的子类 */
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
-	TArray<TSubclassOf<class ALMWeapon>> DefaultInventoryClasses;
+		TArray<TSubclassOf<class ALMWeapon>> DefaultInventoryClasses;
 
 	UPROPERTY(Transient)
-	TArray<class ALMWeapon*> Inventory;
+		TArray<class ALMWeapon*> Inventory;
 
 	/** get firing state */
-	UFUNCTION(BlueprintCallable,Category="Game|Weapon")
-	bool IsFiring() const;
+	UFUNCTION(BlueprintCallable, Category = "Game|Weapon")
+		bool IsFiring() const;
 
-	/** 创建默认的武器 */ 
+	/** 创建默认的武器 */
 	void SpawnDefaultInventory();
 
 	/** 将武器初始化并加入武器库列表 */
@@ -100,33 +61,46 @@ protected:
 
 	/**  设置新武器为当前武器 */
 	void SetCurrentWeapon(class ALMWeapon* NewWeapon, class ALMWeapon* LastWeapon = NULL);
+	
+	/** 移除所有武器*/
+	void DestroyAllInventory();
 public:
 	/** get weapon attach point */
 	FName GetWeaponAttachPoint() const;
 
 	/** get particular weapon attach point */
 	FName GetParticularWeaponAttachPoint() const;
+
+#pragma endregion 武器相关
+
+#pragma region 动画相关
+public:
+	/* check is Dying */
+	uint32 bIsDying : 1;
+
+	/* die anim */
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UAnimMontage *DeathAnim;
+
+	/* hit anim */
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UAnimMontage *HitAnim;
+
+	virtual float PlayAnimMontage(class UAnimMontage* AnimMontage, float InPlayRate = 1.f, FName StartSectionName = NAME_None) override;
+	virtual void StopAnimMontage(class UAnimMontage* AnimMontage) override;
+
+	void PlayHit(float DamageTaken, struct FDamageEvent const & DamageEvent, class APawn* PawnInstigator, class AActor* DamageCauser);
+	void PlayDie(float KillingDamge, FDamageEvent const& DamageEvent, AController* killer, AActor* DamageCauser);
+
+	void StopAllAnimMontage();
+	void SetRagDollPhysics();
+#pragma endregion 动画相关
+
+#pragma region 属性相关
 protected:
-	//////////////////////////////////////////////////////////////////////////
-	// 输入
-
-	/** Called for forwards/backward input */
-	void MoveForward(float Value);
-
-	/** Called for side to side input */
-	void MoveRight(float Value);
-
-	/**
-	* Called via input to turn at a given rate.
-	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	*/
-	void TurnAtRate(float Rate);
-
-	/**
-	* Called via input to turn look up/down at a given rate.
-	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	*/
-	void LookUpAtRate(float Rate);
+	int nCurHealth;
+	int nMaxHealth;
+#pragma endregion 属性相关
 public:
 	/** player pressed start fire action */
 	void OnStartFire();
@@ -141,16 +115,11 @@ public:
 	void OnStopParticularFire();
 protected:
 	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-	virtual void Tick(float DeltaSeconds) override;
 	/** spawn inventory, setup initial variables */
 	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	// End of APawn interface
 	
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
 };
 
